@@ -19,7 +19,7 @@ class IGStreamService(object):
         self.acc_number = None
         self.ls_client = None
 
-    def create_session(self, encryption=False, version="2"):
+    def create_session(self, encryption=False, version="2", verify_ssl = True):
         ig_session = self.ig_service.create_session(
             encryption=encryption, version=version
         )
@@ -36,6 +36,9 @@ class IGStreamService(object):
         self.ls_client = LightstreamerClient(self.lightstreamerEndpoint, None)
         self.ls_client.connectionDetails.setUser(self.acc_number)
         self.ls_client.connectionDetails.setPassword(ls_password)
+        if not verify_ssl:
+            client.setTrustManagerFactory(ig_service.SSL_CONTEXT)
+
         try:
             self.ls_client.connect()
             return

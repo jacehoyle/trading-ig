@@ -12,6 +12,7 @@ import json
 import logging
 import time
 from base64 import b64encode, b64decode
+import ssl
 
 from Crypto.Cipher import PKCS1_v1_5
 from Crypto.PublicKey import RSA
@@ -172,8 +173,10 @@ class IGService:
     API_KEY = None
     IG_USERNAME = None
     IG_PASSWORD = None
+    SSL_CONTEXT = None
     _refresh_token = None
     _valid_until = None
+
 
     def __init__(
         self,
@@ -213,6 +216,10 @@ class IGService:
             self.session = session
 
         self.crud_session = IGSessionCRUD(self.BASE_URL, self.API_KEY, self.session)
+
+        self.SSL_CONTEXT = ssl.create_default_context()
+        self.SSL_CONTEXT.check_hostname = False
+        self.SSL_CONTEXT.verify_mode = ssl.CERT_NONE
 
     def setup_rate_limiter(
         self,
